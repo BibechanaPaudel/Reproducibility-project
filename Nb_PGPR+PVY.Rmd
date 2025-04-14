@@ -1,0 +1,370 @@
+---
+title: "NB_PGPR+PVY"
+author: "Bibechana Paudel"
+date: "2025-04-14"
+output:
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+  md_document:
+    variant: gfm
+---
+
+
+# First trial
+
+###Libraries used
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(agricolae)
+library(tidyr)
+```
+
+###Load and verify data of Rep 1
+```{r}
+rep1 <- read.csv("Nb_PGPR+PVY_1st_Reproducibility.csv", header=T)
+head(rep1)  # View the first few rows
+str(rep1)   # Check the structure of the data
+summary(rep1) # Quick statistical summary
+```
+
+###Make the factor variable
+```{r}
+rep1$Treatment<-as.factor(rep1$Treatment)
+rep1$Dpi<-as.factor(rep1$Dpi)
+```
+###Add a new column ViralLoad
+```{r}
+rep1$ViralLoad<-((10^((rep1$Cq-49.153)/-3.93)))
+```
+###Reorder the Treatment and Dpi factor(IL sample only)
+
+```{r}
+rep1$Treatment <- factor(rep1$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep1_IL <- rep1[rep1$Dpi %in% c("IL-1", "IL-4", "IL-7", "IL-10"), ]
+```
+
+####Plot Bar graph
+
+```{r, IL-Rep1}
+cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
+PVY1_IL<-ggplot(rep1_IL, aes(x =factor(Dpi,levels=c("IL-1", "IL-4", "IL-7", "IL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "IL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+  )
+PVY1_IL
+
+
+```
+
+#Reorder the Treatment factor and DPi (SL only)
+```{r}
+rep1$Treatment <- factor(rep1$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep1_SL <- rep1[rep1$Dpi %in% c("SL-7", "SL-10"), ]
+```
+
+####Plot Bar graph
+```{r, SL-Rep1}
+cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
+
+PVY1_SL<-ggplot(rep1_SL, aes(x =factor(Dpi,levels=c("SL-7", "SL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "SL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+        
+  )
+PVY1_SL
+
+```
+
+ 
+###Loop for subsetting the Dpi and linear modeling
+
+```{r}
+# Create vector of cytokines to analyze
+R1 <- c("IL-1", "IL-4", "IL-7", "IL-10","SL-7","SL-10")
+
+# Loop through cytokines and print model summaries
+for (dpi in R1) {
+  cat("\nModel Summary for", dpi, ":\n")
+  
+  rep1 %>%
+    filter(Dpi == dpi) %>%
+    lm(log10(ViralLoad) ~ Treatment + Replication, data = .) %>%
+    summary() %>%
+    print()
+}
+```
+
+# Second trial
+
+##Load and verify the data
+
+```{r}
+rep2 <- read.csv("Nb+PGPR+PVY_2nd_Reproducibility.csv", na.strings="na")
+str(rep2)   # Check the structure of the data
+summary(rep2) # Quick statistical summary
+```
+
+###Make the factor variable
+```{r}
+rep2$Treatment<-as.factor(rep2$Treatment)
+rep2$Dpi<-as.factor(rep2$Dpi)
+rep2$ViralLoad<-((10^((rep2$Cq-49.153)/-3.93)))
+```
+
+```{r}
+# Reorder the Treatment  and Dpi (IL only) factor
+rep2$Treatment <- factor(rep2$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep2_IL <- rep2[rep2$Dpi %in% c("IL-1", "IL-4", "IL-7", "IL-10"), ]
+```
+
+
+```{r, IL-Rep2}
+####Plot Bar graph
+cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
+PVY2_IL<-ggplot(rep2_IL, aes(x =factor(Dpi,levels=c("IL-1", "IL-4", "IL-7", "IL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "IL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+  )
+PVY2_IL
+```
+
+
+
+```{r}
+# Reorder the Treatment and Dpi (SL only) factor
+rep2$Treatment <- factor(rep1$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep2_SL <- rep2[rep2$Dpi %in% c("SL-7", "SL-10"), ]
+```
+
+
+```{r, SL-Rep2}
+####Bar graph
+PVY2_SL<-ggplot(rep2_SL, aes(x =factor(Dpi,levels=c("SL-7", "SL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "SL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+        
+  )
+PVY2_SL
+```
+
+###Loop for subsetting the Dpi and linear modeling
+
+```{r}
+# Create vector of cytokines to analyze
+R2 <- c("IL-1", "IL-4", "IL-7", "IL-10","SL-7","SL-10")
+
+# Loop through cytokines and print model summaries
+for (dpi in R2) {
+  cat("\nModel Summary for", dpi, ":\n")
+  
+  rep2 %>%
+    filter(Dpi == dpi) %>%
+    lm(log10(ViralLoad) ~ Treatment + Replication, data = .) %>%
+    summary() %>%
+    print()
+}
+```
+
+# Third trial
+
+```{r}
+## Load data Rep 3
+rep3 <- read.csv("Nb_PGPR+PVY_3rd_Reproducibility.csv", na.strings="na")
+####Verify the data
+head(rep3)  # View the first few rows
+str(rep3)   # Check the structure of the data
+summary(rep3) # Quick statistical summary
+```
+
+###Make the factor variable
+```{r}
+rep3$Treatment<-as.factor(rep3$Treatment)
+rep3$Dpi<-as.factor(rep3$Dpi)
+```
+
+
+```{r}
+rep3$ViralLoad<-((10^((rep3$Cq-49.153)/-3.93)))
+```
+
+
+```{r}
+# Reorder the Treatment and Dpi (IL only) factor
+rep3$Treatment <- factor(rep3$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep3_IL <- rep3[rep3$Dpi %in% c("IL-1", "IL-4", "IL-7", "IL-10"), ]
+```
+
+
+```{r, IL-Rep3}
+####Bar graph
+cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
+PVY3_IL<-ggplot(rep3_IL, aes(x =factor(Dpi,levels=c("IL-1", "IL-4", "IL-7", "IL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "IL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+  )
+PVY3_IL
+```
+
+
+```{r}
+# Reorder the Treatment and Dpi (SL only) factor
+rep3$Treatment <- factor(rep3$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+rep3_SL <- rep3[rep3$Dpi %in% c("SL-7", "SL-10"), ]
+```
+
+
+```{r, SL-Rep3}
+####Bar graph
+
+PVY3_SL<-ggplot(rep3_SL, aes(x =factor(Dpi,levels=c("SL-7", "SL-10")), y = log10(ViralLoad), fill = Treatment)) +
+  stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
+  stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  theme_classic() +
+  labs(title= "SL" ,
+       x = "",
+       y = "Log Copy Number") +
+  scale_fill_manual(values=cbbPalette,
+                    labels=c("Control",expression(italic("P. fluorescens")), 
+                             expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+  )+
+  theme(legend.position = "right",
+        legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
+        legend.title = element_blank(),  # Adjusts the legend title font size
+        legend.text = element_text(size = 7),
+        plot.title= element_text(hjust = 0.5), # Center the plot title
+        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
+        axis.title.x = element_text(color = "black"),  # X-axis label color
+        axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
+        axis.line = element_line(color = "black")      # Axis lines color
+        
+  )
+PVY3_SL
+
+```
+
+###Loop for subsetting the Dpi and linear modeling
+
+```{r}
+# Create vector of cytokines to analyze
+R3 <- c("IL-1", "IL-4", "IL-7", "IL-10","SL-7","SL-10")
+
+# Loop through cytokines and print model summaries
+for (dpi in R3) {
+  cat("\nModel Summary for", dpi, ":\n")
+  
+  rep3 %>%
+    filter(Dpi == dpi) %>%
+    lm(log10(ViralLoad) ~ Treatment + Replication, data = .) %>%
+    summary() %>%
+    print()
+}
+```
+
+
+
