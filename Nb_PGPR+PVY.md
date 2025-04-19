@@ -404,7 +404,7 @@ PVY.1st<-ggarrange(PVY_IL_1, PVY_SL_1,    #combine the  figures
 PVY.1st
 ```
 
-![](Nb_PGPR+PVY_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Nb_PGPR+PVY_files/figure-gfm/Combine%20fig%201st%20trial-1.png)<!-- -->
 
 # **Second trial**
 
@@ -742,7 +742,7 @@ PVY.2nd<-ggarrange(PVY_IL_2, PVY_SL_2,    #combine figures
 PVY.2nd
 ```
 
-![](Nb_PGPR+PVY_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Nb_PGPR+PVY_files/figure-gfm/Combine%20fig%202nd%20trial-1.png)<!-- -->
 
 # **Third trial**
 
@@ -1092,4 +1092,4 @@ PVY.3rd<-ggarrange(PVY_IL_3, PVY_SL_3,        #combine figure
 PVY.3rd
 ```
 
-![](Nb_PGPR+PVY_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](Nb_PGPR+PVY_files/figure-gfm/Combine%20fig%203rd%20trial-1.png)<!-- -->

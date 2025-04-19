@@ -178,7 +178,7 @@ PVY_SL_1<-ggplot(systemic, aes(x =factor(Dpi,levels=c("SL-7","SL-10")), y =avg.v
 
 ## Combined figure
 
-```{r}
+```{r, Combine fig 1st trial}
 PVY.1st<-ggarrange(PVY_IL_1, PVY_SL_1,    #combine the  figures 
                    nrow=1,
                    ncol=2,
@@ -340,7 +340,7 @@ PVY_SL_2<-ggplot(systemic, aes(x =factor(Dpi,levels=c("SL-7","SL-10")), y =avg.v
 
 ## Combined figure
 
-```{r}
+```{r, Combine fig 2nd trial}
 PVY.2nd<-ggarrange(PVY_IL_2, PVY_SL_2,    #combine figures
                    nrow=1,
                    ncol=2,
@@ -503,7 +503,7 @@ PVY_SL_3<-ggplot(systemic, aes(x =factor(Dpi,levels=c("SL-7","SL-10")), y =avg.v
 
 ## Combined figure
 
-```{r}
+```{r, Combine fig 3rd trial}
 PVY.3rd<-ggarrange(PVY_IL_3, PVY_SL_3,        #combine figure  
                    nrow=1,
                    ncol=2,
