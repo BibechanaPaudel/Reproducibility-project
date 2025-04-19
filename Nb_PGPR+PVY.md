@@ -21,6 +21,38 @@ library(tidyverse)
 library(ggplot2)
 library(agricolae)
 library(tidyr)
+library(ggpubr)
+library(multcomp)
+```
+
+    ## Loading required package: mvtnorm
+    ## Loading required package: survival
+    ## Loading required package: TH.data
+    ## Loading required package: MASS
+    ## 
+    ## Attaching package: 'MASS'
+    ## 
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     select
+    ## 
+    ## 
+    ## Attaching package: 'TH.data'
+    ## 
+    ## The following object is masked from 'package:MASS':
+    ## 
+    ##     geyser
+
+``` r
+library(emmeans)
+```
+
+    ## Welcome to emmeans.
+    ## Caution: You lose important information if you filter this package's results.
+    ## See '? untidy'
+
+``` r
+library(multcompView)
 ```
 
 \###Load and verify data of Rep 1
@@ -67,261 +99,303 @@ rep1$Treatment<-as.factor(rep1$Treatment)
 rep1$Dpi<-as.factor(rep1$Dpi)
 ```
 
-\###Add a new column ViralLoad
+\##Calculate the ViralLoad using the formula derived by …. and log
+transform for normality.
 
 ``` r
-rep1$ViralLoad<-((10^((rep1$Cq-49.153)/-3.93)))
+rep1<-rep1 %>% 
+mutate (ViralLoad=((10^((Cq-49.153)/-3.93)))) %>% 
+mutate(logViralLoad=log10(ViralLoad))
 ```
 
-\###Reorder the Treatment and Dpi factor(IL sample only)
+## Statistical analysis
 
 ``` r
-rep1$Treatment <- factor(rep1$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
-rep1_IL <- rep1[rep1$Dpi %in% c("IL-1", "IL-4", "IL-7", "IL-10"), ]
+model<-lm(logViralLoad~Treatment*Dpi,data=rep1)
+car::Anova(model)
 ```
 
-\####Plot Bar graph
+    ## Anova Table (Type II tests)
+    ## 
+    ## Response: logViralLoad
+    ##                Sum Sq Df  F value    Pr(>F)    
+    ## Treatment      13.409  4  2050.38 < 2.2e-16 ***
+    ## Dpi           104.420  5 12773.16 < 2.2e-16 ***
+    ## Treatment:Dpi  14.435 20   441.45 < 2.2e-16 ***
+    ## Residuals       0.098 60                       
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+lsmeans <- emmeans(model, ~Treatment|Dpi) # estimate lsmeans of variety within siteXyear
+Results_lsmeansEC <- multcomp::cld(lsmeans, alpha = 0.05, reversed = TRUE, details = TRUE,  Letters = letters) # contrast with Tukey ajustment
+Results_lsmeansEC
+```
+
+    ## $emmeans
+    ## Dpi = IL-1:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  Control                7.48 0.0233 60     7.43     7.53  a    
+    ##  B. subtilis            7.36 0.0233 60     7.31     7.41   b   
+    ##  B. amyloliquifaciens   7.27 0.0233 60     7.22     7.31   b   
+    ##  P. fluorescens         7.15 0.0233 60     7.11     7.20    c  
+    ##  S. marcescens          6.97 0.0233 60     6.93     7.02     d 
+    ## 
+    ## Dpi = IL-10:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  Control                8.43 0.0233 60     8.38     8.47  a    
+    ##  S. marcescens          8.22 0.0233 60     8.17     8.26   b   
+    ##  B. amyloliquifaciens   7.21 0.0233 60     7.16     7.26    c  
+    ##  B. subtilis            7.00 0.0233 60     6.95     7.04     d 
+    ##  P. fluorescens         6.66 0.0233 60     6.61     6.71      e
+    ## 
+    ## Dpi = IL-4:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  Control                8.04 0.0233 60     8.00     8.09  a    
+    ##  S. marcescens          7.08 0.0233 60     7.03     7.12   b   
+    ##  B. amyloliquifaciens   6.87 0.0233 60     6.83     6.92    c  
+    ##  B. subtilis            6.79 0.0233 60     6.74     6.84    c  
+    ##  P. fluorescens         6.64 0.0233 60     6.59     6.68     d 
+    ## 
+    ## Dpi = IL-7:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  Control                8.37 0.0233 60     8.33     8.42  a    
+    ##  S. marcescens          7.61 0.0233 60     7.56     7.66   b   
+    ##  P. fluorescens         7.15 0.0233 60     7.10     7.20    c  
+    ##  B. amyloliquifaciens   7.08 0.0233 60     7.04     7.13    cd 
+    ##  B. subtilis            7.01 0.0233 60     6.96     7.06     d 
+    ## 
+    ## Dpi = SL-10:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  Control                5.70 0.0233 60     5.65     5.74  a    
+    ##  P. fluorescens         5.25 0.0233 60     5.20     5.29   b   
+    ##  B. subtilis            4.85 0.0233 60     4.80     4.90    c  
+    ##  S. marcescens          4.30 0.0233 60     4.25     4.34     d 
+    ##  B. amyloliquifaciens   4.15 0.0233 60     4.10     4.19      e
+    ## 
+    ## Dpi = SL-7:
+    ##  Treatment            emmean     SE df lower.CL upper.CL .group
+    ##  B. amyloliquifaciens   6.39 0.0233 60     6.35     6.44  a    
+    ##  Control                5.87 0.0233 60     5.82     5.91   b   
+    ##  S. marcescens          4.80 0.0233 60     4.75     4.84    c  
+    ##  P. fluorescens         4.71 0.0233 60     4.66     4.76    cd 
+    ##  B. subtilis            4.69 0.0233 60     4.64     4.73     d 
+    ## 
+    ## Confidence level used: 0.95 
+    ## P value adjustment: tukey method for comparing a family of 5 estimates 
+    ## significance level used: alpha = 0.05 
+    ## NOTE: If two or more means share the same grouping symbol,
+    ##       then we cannot show them to be different.
+    ##       But we also did not show them to be the same. 
+    ## 
+    ## $comparisons
+    ## Dpi = IL-1:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  P. fluorescens - S. marcescens          0.1790 0.033 60   5.421  <.0001
+    ##  B. amyloliquifaciens - S. marcescens    0.2952 0.033 60   8.940  <.0001
+    ##  B. amyloliquifaciens - P. fluorescens   0.1162 0.033 60   3.520  0.0072
+    ##  B. subtilis - S. marcescens             0.3859 0.033 60  11.689  <.0001
+    ##  B. subtilis - P. fluorescens            0.2070 0.033 60   6.269  <.0001
+    ##  B. subtilis - B. amyloliquifaciens      0.0908 0.033 60   2.749  0.0585
+    ##  Control - S. marcescens                 0.5081 0.033 60  15.389  <.0001
+    ##  Control - P. fluorescens                0.3291 0.033 60   9.968  <.0001
+    ##  Control - B. amyloliquifaciens          0.2129 0.033 60   6.448  <.0001
+    ##  Control - B. subtilis                   0.1221 0.033 60   3.699  0.0042
+    ## 
+    ## Dpi = IL-10:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  B. subtilis - P. fluorescens            0.3350 0.033 60  10.148  <.0001
+    ##  B. amyloliquifaciens - P. fluorescens   0.5479 0.033 60  16.596  <.0001
+    ##  B. amyloliquifaciens - B. subtilis      0.2129 0.033 60   6.448  <.0001
+    ##  S. marcescens - P. fluorescens          1.5564 0.033 60  47.142  <.0001
+    ##  S. marcescens - B. subtilis             1.2214 0.033 60  36.994  <.0001
+    ##  S. marcescens - B. amyloliquifaciens    1.0085 0.033 60  30.546  <.0001
+    ##  Control - P. fluorescens                1.7659 0.033 60  53.488  <.0001
+    ##  Control - B. subtilis                   1.4309 0.033 60  43.340  <.0001
+    ##  Control - B. amyloliquifaciens          1.2180 0.033 60  36.892  <.0001
+    ##  Control - S. marcescens                 0.2095 0.033 60   6.346  <.0001
+    ## 
+    ## Dpi = IL-4:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  B. subtilis - P. fluorescens            0.1535 0.033 60   4.650  0.0002
+    ##  B. amyloliquifaciens - P. fluorescens   0.2349 0.033 60   7.116  <.0001
+    ##  B. amyloliquifaciens - B. subtilis      0.0814 0.033 60   2.466  0.1122
+    ##  S. marcescens - P. fluorescens          0.4377 0.033 60  13.256  <.0001
+    ##  S. marcescens - B. subtilis             0.2841 0.033 60   8.606  <.0001
+    ##  S. marcescens - B. amyloliquifaciens    0.2027 0.033 60   6.140  <.0001
+    ##  Control - P. fluorescens                1.4071 0.033 60  42.621  <.0001
+    ##  Control - B. subtilis                   1.2536 0.033 60  37.971  <.0001
+    ##  Control - B. amyloliquifaciens          1.1722 0.033 60  35.504  <.0001
+    ##  Control - S. marcescens                 0.9695 0.033 60  29.364  <.0001
+    ## 
+    ## Dpi = IL-7:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  B. amyloliquifaciens - B. subtilis      0.0729 0.033 60   2.209  0.1903
+    ##  P. fluorescens - B. subtilis            0.1399 0.033 60   4.239  0.0007
+    ##  P. fluorescens - B. amyloliquifaciens   0.0670 0.033 60   2.030  0.2647
+    ##  S. marcescens - B. subtilis             0.5988 0.033 60  18.138  <.0001
+    ##  S. marcescens - B. amyloliquifaciens    0.5259 0.033 60  15.928  <.0001
+    ##  S. marcescens - P. fluorescens          0.4589 0.033 60  13.899  <.0001
+    ##  Control - B. subtilis                   1.3622 0.033 60  41.259  <.0001
+    ##  Control - B. amyloliquifaciens          1.2892 0.033 60  39.050  <.0001
+    ##  Control - P. fluorescens                1.2222 0.033 60  37.020  <.0001
+    ##  Control - S. marcescens                 0.7634 0.033 60  23.122  <.0001
+    ## 
+    ## Dpi = SL-10:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  S. marcescens - B. amyloliquifaciens    0.1493 0.033 60   4.522  0.0003
+    ##  B. subtilis - B. amyloliquifaciens      0.7040 0.033 60  21.323  <.0001
+    ##  B. subtilis - S. marcescens             0.5547 0.033 60  16.802  <.0001
+    ##  P. fluorescens - B. amyloliquifaciens   1.1009 0.033 60  33.346  <.0001
+    ##  P. fluorescens - S. marcescens          0.9517 0.033 60  28.825  <.0001
+    ##  P. fluorescens - B. subtilis            0.3969 0.033 60  12.023  <.0001
+    ##  Control - B. amyloliquifaciens          1.5496 0.033 60  46.937  <.0001
+    ##  Control - S. marcescens                 1.4003 0.033 60  42.415  <.0001
+    ##  Control - B. subtilis                   0.8456 0.033 60  25.614  <.0001
+    ##  Control - P. fluorescens                0.4487 0.033 60  13.590  <.0001
+    ## 
+    ## Dpi = SL-7:
+    ##  contrast                              estimate    SE df t.ratio p.value
+    ##  P. fluorescens - B. subtilis            0.0221 0.033 60   0.668  0.9625
+    ##  S. marcescens - B. subtilis             0.1103 0.033 60   3.340  0.0121
+    ##  S. marcescens - P. fluorescens          0.0882 0.033 60   2.672  0.0703
+    ##  Control - B. subtilis                   1.1798 0.033 60  35.736  <.0001
+    ##  Control - P. fluorescens                1.1578 0.033 60  35.068  <.0001
+    ##  Control - S. marcescens                 1.0696 0.033 60  32.396  <.0001
+    ##  B. amyloliquifaciens - B. subtilis      1.7048 0.033 60  51.638  <.0001
+    ##  B. amyloliquifaciens - P. fluorescens   1.6828 0.033 60  50.970  <.0001
+    ##  B. amyloliquifaciens - S. marcescens    1.5946 0.033 60  48.298  <.0001
+    ##  B. amyloliquifaciens - Control          0.5250 0.033 60  15.902  <.0001
+    ## 
+    ## P value adjustment: tukey method for comparing a family of 5 estimates
+
+\##Data summarization
+
+``` r
+# Extracting the letters for the bars
+sig.diff.letters <- data.frame(Results_lsmeansEC$emmeans$Treatment, 
+                               Results_lsmeansEC$emmeans$Dpi,
+                               str_trim(Results_lsmeansEC$emmeans$.group))
+colnames(sig.diff.letters) <- c("Treatment", 
+                                "Dpi",
+                                "Letters")
+```
+
+\##Extract significance letters for plotting
+
+``` r
+PVY1 <- rep1 %>%
+  group_by(Treatment, Dpi) %>%
+  dplyr::summarize(
+    avg.virus= mean(logViralLoad, na.rm=TRUE),
+    n=n(),
+    se = sd(logViralLoad)/sqrt(n)) %>%
+  left_join(sig.diff.letters)
+```
+
+    ## `summarise()` has grouped output by 'Treatment'. You can override using the
+    ## `.groups` argument.
+    ## Joining with `by = join_by(Treatment, Dpi)`
+
+\##Classify the sample collection days based on leaf
+
+``` r
+PVY1$Leaf_sample <- ifelse(
+  grepl("^IL", PVY1$Dpi), "Inoculated",  # Matches Dpi values starting with IL
+  ifelse(grepl("^SL", PVY1$Dpi), "Systemic", NA)
+)
+```
+
+## Visualization: Inoculated sample
+
+``` r
+inoculated<-filter(PVY1, Dpi=="IL-1" | Dpi=="IL-4" | Dpi=="IL-7" | Dpi=="IL-10")
+inoculated$Treatment<-factor(inoculated$Treatment, levels=c("Control","P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
+```
 
 ``` r
 cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
-PVY1_IL<-ggplot(rep1_IL, aes(x =factor(Dpi,levels=c("IL-1", "IL-4", "IL-7", "IL-10")), y = log10(ViralLoad), fill = Treatment)) +
+PVY_IL_1<-ggplot(inoculated, aes(x =factor(Dpi,levels=c("IL-1", "IL-4", "IL-7", "IL-10")), y =avg.virus , fill = Treatment)) +
   stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
   stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  geom_text(data = inoculated, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+
   theme_classic() +
-  labs(title= "IL" ,
+  labs(title= "" ,
        x = "",
        y = "Log Copy Number") +
   scale_fill_manual(values=cbbPalette,
                     labels=c("Control",expression(italic("P. fluorescens")), 
                              expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
   scale_y_continuous(
-    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+    expand = expansion(mult = c(0, 0.1)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
   )+
   theme(legend.position = "right",
         legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
         legend.title = element_blank(),  # Adjusts the legend title font size
-        legend.text = element_text(size = 7),
-        plot.title= element_text(hjust = 0.5), # Center the plot title
-        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        legend.text = element_text(size = 8),
+               axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
         axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
         axis.title.x = element_text(color = "black"),  # X-axis label color
         axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
         axis.line = element_line(color = "black")      # Axis lines color
   )
-PVY1_IL
+
+ PVY_IL_1 
 ```
 
-![](Nb_PGPR+PVY_files/figure-gfm/IL-Rep1-1.png)<!-- -->
+![](Nb_PGPR+PVY_files/figure-gfm/PVY%20on%20IL_1st%20trial_NB-1.png)<!-- -->
 
-\#Reorder the Treatment factor and DPi (SL only)
+## Visualization: Systemic sample
 
 ``` r
-rep1$Treatment <- factor(rep1$Treatment, levels = c("Control", "P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
-rep1_SL <- rep1[rep1$Dpi %in% c("SL-7", "SL-10"), ]
+systemic<-filter(PVY1, Dpi=="SL-7" | Dpi=="SL-10")
+systemic$Treatment<-factor(systemic$Treatment, levels=c("Control","P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
 ```
-
-\####Plot Bar graph
 
 ``` r
 cbbPalette <- c( "#56B4E9","#F0E442","#CC79A7", "#E69F00", "#009E73")
-
-PVY1_SL<-ggplot(rep1_SL, aes(x =factor(Dpi,levels=c("SL-7", "SL-10")), y = log10(ViralLoad), fill = Treatment)) +
+PVY_SL_1<-ggplot(systemic, aes(x =factor(Dpi,levels=c("SL-7","SL-10")), y =avg.virus , fill = Treatment)) +
   stat_summary(fun=mean,geom="bar", position = position_dodge(width = 0.7), width = 0.6) +
   stat_summary(fun.data = mean_se, geom="errorbar",width = 0.2, position = position_dodge(width = 0.7)) +
+  geom_text(data = systemic, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+
   theme_classic() +
-  labs(title= "SL" ,
+  labs(title= "" ,
        x = "",
        y = "Log Copy Number") +
   scale_fill_manual(values=cbbPalette,
                     labels=c("Control",expression(italic("P. fluorescens")), 
                              expression(italic("S. marcescens")),expression(italic("B. amyloliquifaciens")),expression(italic("B. subtilis"))))+
   scale_y_continuous(
-    expand = expansion(mult = c(0, 0.3)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
+    expand = expansion(mult = c(0, 0.1)), breaks = seq(1, 9, by = 1)  # This removes padding at the bottom of the plot
   )+
   theme(legend.position = "right",
         legend.key.size = unit(0.5, "cm"),  # Adjusts the size of the legend keys
         legend.title = element_blank(),  # Adjusts the legend title font size
-        legend.text = element_text(size = 7),
-        plot.title= element_text(hjust = 0.5), # Center the plot title
-        axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
+        legend.text = element_text(size = 8),
+                axis.text.x = element_text(color = "black", face="bold"),   # X-axis text color
         axis.text.y = element_text(color = "black", face="bold"),   # Y-axis text color
         axis.title.x = element_text(color = "black"),  # X-axis label color
         axis.title.y = element_text(color = "black", face="bold", size=12),  # Y-axis label color
         axis.line = element_line(color = "black")      # Axis lines color
-        
   )
-PVY1_SL
+
+ PVY_SL_1 
 ```
 
-![](Nb_PGPR+PVY_files/figure-gfm/SL-Rep1-1.png)<!-- -->
+![](Nb_PGPR+PVY_files/figure-gfm/PVY.systemic.1sttrial-1.png)<!-- -->
 
-\###Loop for subsetting the Dpi and linear modeling
+## Combined figure
 
 ``` r
-# Create vector of cytokines to analyze
-R1 <- c("IL-1", "IL-4", "IL-7", "IL-10","SL-7","SL-10")
-
-# Loop through cytokines and print model summaries
-for (dpi in R1) {
-  cat("\nModel Summary for", dpi, ":\n")
-  
-  rep1 %>%
-    filter(Dpi == dpi) %>%
-    lm(log10(ViralLoad) ~ Treatment + Replication, data = .) %>%
-    summary() %>%
-    print()
-}
+PVY.1st<-ggarrange(PVY_IL_1, PVY_SL_1,
+                   nrow=1,
+                   ncol=2,
+                   common.legend=T,
+                   widths=c(1.75,1))
+PVY.1st
 ```
 
-    ## 
-    ## Model Summary for IL-1 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##       Min        1Q    Median        3Q       Max 
-    ## -0.042409 -0.008058 -0.000848  0.008906  0.049194 
-    ## 
-    ## Coefficients:
-    ##                                Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    7.511366   0.021838 343.952  < 2e-16 ***
-    ## TreatmentP. fluorescens       -0.329092   0.020822 -15.805 7.16e-08 ***
-    ## TreatmentS. marcescens        -0.508058   0.020822 -24.400 1.56e-09 ***
-    ## TreatmentB. amyloliquifaciens -0.212892   0.020822 -10.224 2.97e-06 ***
-    ## TreatmentB. subtilis          -0.122137   0.020822  -5.866 0.000239 ***
-    ## Replication                   -0.015267   0.008064  -1.893 0.090876 .  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.0255 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9874, Adjusted R-squared:  0.9804 
-    ## F-statistic: 140.8 on 5 and 9 DF,  p-value: 2.903e-08
-    ## 
-    ## 
-    ## Model Summary for IL-4 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##       Min        1Q    Median        3Q       Max 
-    ## -0.067515 -0.006785  0.001357  0.015437  0.035284 
-    ## 
-    ## Coefficients:
-    ##                               Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    8.09983    0.02866 282.621  < 2e-16 ***
-    ## TreatmentP. fluorescens       -1.40712    0.02733 -51.494 1.97e-12 ***
-    ## TreatmentS. marcescens        -0.96947    0.02733 -35.478 5.55e-11 ***
-    ## TreatmentB. amyloliquifaciens -1.17218    0.02733 -42.896 1.01e-11 ***
-    ## TreatmentB. subtilis          -1.25360    0.02733 -45.876 5.56e-12 ***
-    ## Replication                   -0.02748    0.01058  -2.597   0.0289 *  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.03347 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9973, Adjusted R-squared:  0.9958 
-    ## F-statistic: 672.5 on 5 and 9 DF,  p-value: 2.706e-11
-    ## 
-    ## 
-    ## Model Summary for IL-7 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##       Min        1Q    Median        3Q       Max 
-    ## -0.081425 -0.012723 -0.003393  0.010178  0.089059 
-    ## 
-    ## Coefficients:
-    ##                               Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    8.34767    0.03843 217.195  < 2e-16 ***
-    ## TreatmentP. fluorescens       -1.22222    0.03665 -33.353 9.65e-11 ***
-    ## TreatmentS. marcescens        -0.76336    0.03665 -20.831 6.34e-09 ***
-    ## TreatmentB. amyloliquifaciens -1.28923    0.03665 -35.181 5.99e-11 ***
-    ## TreatmentB. subtilis          -1.36217    0.03665 -37.172 3.66e-11 ***
-    ## Replication                    0.01272    0.01419   0.896    0.393    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.04488 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9954, Adjusted R-squared:  0.9928 
-    ## F-statistic: 385.6 on 5 and 9 DF,  p-value: 3.27e-10
-    ## 
-    ## 
-    ## Model Summary for IL-10 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##        Min         1Q     Median         3Q        Max 
-    ## -0.0293469 -0.0093299  0.0003393  0.0146735  0.0223919 
-    ## 
-    ## Coefficients:
-    ##                                Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    8.453859   0.017647  479.06  < 2e-16 ***
-    ## TreatmentP. fluorescens       -1.765903   0.016825 -104.95 3.28e-15 ***
-    ## TreatmentS. marcescens        -0.209500   0.016825  -12.45 5.62e-07 ***
-    ## TreatmentB. amyloliquifaciens -1.217981   0.016825  -72.39 9.26e-14 ***
-    ## TreatmentB. subtilis          -1.430874   0.016825  -85.04 2.18e-14 ***
-    ## Replication                   -0.013232   0.006516   -2.03   0.0729 .  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.02061 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9995, Adjusted R-squared:  0.9992 
-    ## F-statistic:  3415 on 5 and 9 DF,  p-value: 1.828e-14
-    ## 
-    ## 
-    ## Model Summary for SL-7 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##       Min        1Q    Median        3Q       Max 
-    ## -0.046735 -0.027990  0.008482  0.019042  0.038253 
-    ## 
-    ## Coefficients:
-    ##                                Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    5.855895   0.029190 200.612  < 2e-16 ***
-    ## TreatmentP. fluorescens       -1.157761   0.027832 -41.599 1.34e-11 ***
-    ## TreatmentS. marcescens        -1.069550   0.027832 -38.429 2.72e-11 ***
-    ## TreatmentB. amyloliquifaciens  0.525021   0.027832  18.864 1.52e-08 ***
-    ## TreatmentB. subtilis          -1.179813   0.027832 -42.391 1.13e-11 ***
-    ## Replication                    0.005852   0.010779   0.543      0.6    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.03409 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9986, Adjusted R-squared:  0.9978 
-    ## F-statistic:  1286 on 5 and 9 DF,  p-value: 1.473e-12
-    ## 
-    ## 
-    ## Model Summary for SL-10 :
-    ## 
-    ## Call:
-    ## lm(formula = log10(ViralLoad) ~ Treatment + Replication, data = .)
-    ## 
-    ## Residuals:
-    ##       Min        1Q    Median        3Q       Max 
-    ## -0.061917 -0.027396 -0.003393  0.017642  0.117218 
-    ## 
-    ## Coefficients:
-    ##                               Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                    5.75021    0.04852 118.521 1.10e-15 ***
-    ## TreatmentP. fluorescens       -0.44869    0.04626  -9.700 4.61e-06 ***
-    ## TreatmentS. marcescens        -1.40034    0.04626 -30.272 2.29e-10 ***
-    ## TreatmentB. amyloliquifaciens -1.54962    0.04626 -33.499 9.28e-11 ***
-    ## TreatmentB. subtilis          -0.84563    0.04626 -18.281 2.00e-08 ***
-    ## Replication                   -0.02697    0.01792  -1.505    0.166    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.05665 on 9 degrees of freedom
-    ## Multiple R-squared:  0.9943, Adjusted R-squared:  0.9911 
-    ## F-statistic: 313.7 on 5 and 9 DF,  p-value: 8.22e-10
+![](Nb_PGPR+PVY_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 # Second trial
 
