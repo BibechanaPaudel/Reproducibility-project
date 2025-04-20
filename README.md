@@ -1,4 +1,4 @@
-# Impact of Plant Growth Promoting Rhizobacteria (PGPR) Treatments on Potato Virus Y (PVY) Accumulation in *Nicotiana benthamiana*
+# Impact of PGPR on PVY Accumulation in *Nicotiana benthamiana*
 
 This repository contains the full R-based analytical workflow assessing the effect of PGPR on the accumulation of PVY in *Nicotiana benthamiana* across three independent biological replicates.The complete dataset used in the project is included in the repository with the folder name data to ensure full transparency and reproducibility. 
 
