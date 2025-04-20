@@ -13,7 +13,7 @@ This repository contains the full R-based analytical workflow assessing the effe
 
 - [Nb_PGPR+PVY.md](https://github.com/BibechanaPaudel/Reproducibility-project/blob/main/Nb_PGPR%2BPVY.md): Markdown-exported version for GitHub-friendly viewing.
 
-- Nb_PGPR+PVY_files/figure-gfm: Output plots in high-quality vector format (.png). 
+- [Nb_PGPR+PVY_files/figure-gfm](https://github.com/BibechanaPaudel/Reproducibility-project/tree/main/Nb_PGPR%2BPVY_files/figure-gfm): Output plots in high-quality vector format (.png). 
 
 
 ### Project Overview
