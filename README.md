@@ -5,7 +5,7 @@ This repository contains the full R-based analytical workflow assessing the effe
 **Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
 
 ### Folder and File Structure
-- Data/: Contains .csv files for each of the three replicates.
+- Data/: Contains .csv files for each of the three biological replicates.
 
 - Nb_PGPR+PVY.Rmd: The complete R script with code, output, and narrative.
 
