@@ -5,13 +5,13 @@ This repository contains the full R-based analytical workflow assessing the effe
 **Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
 
 ### Folder and File Structure
-- Data/: Contains .csv files for each of the three biological replicates.
+- [Data](https://github.com/BibechanaPaudel/Reproducibility-project/tree/main/Nb_PGPR%2BPVY_files/figure-gfm): Contains .csv files for each of the three biological replicates.
 
-- Nb_PGPR+PVY.Rmd: The complete R script with code, output, and narrative.
+- [Nb_PGPR+PVY.Rmd](https://github.com/BibechanaPaudel/Reproducibility-project/blob/main/Nb_PGPR%2BPVY.Rmd): The complete R script with code, output, and narrative.
 
-- Nb_PGPR+PVY.html: Rendered HTML version of the RMarkdown.
+- [Nb_PGPR+PVY.html](https://github.com/BibechanaPaudel/Reproducibility-project/blob/main/Nb_PGPR%2BPVY.html): Rendered HTML version of the RMarkdown.
 
-- Nb_PGPR+PVY.md: Markdown-exported version for GitHub-friendly viewing.
+- [Nb_PGPR+PVY.md](https://github.com/BibechanaPaudel/Reproducibility-project/blob/main/Nb_PGPR%2BPVY.md): Markdown-exported version for GitHub-friendly viewing.
 
 - Nb_PGPR+PVY_files/figure-gfm: Output plots in high-quality vector format (.png). 
 
