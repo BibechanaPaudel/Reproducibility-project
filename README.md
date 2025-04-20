@@ -1,8 +1,6 @@
-# Reproducibility-project
+# Impact of Plant Growth Promoting Rhizobacteria (PGPR) Treatments on Potato Virus Y (PVY) Accumulation in *Nicotiana benthamiana*
 
-**Title:** Impact of Plant Growth Promoting Rhizobacteria (PGPR) Treatments on Potato Virus Y (PVY) Accumulation in *Nicotiana benthamiana*
-
-This repository contains the full R-based analytical workflow assessing the effect of PGPR on the accumulation of PVY in *Nicotiana benthamiana* across three independent biological replicates.
+This repository contains the full R-based analytical workflow assessing the effect of PGPR on the accumulation of PVY in *Nicotiana benthamiana* across three independent biological replicates.The complete dataset used in the project is included in the repository with the folder name data to ensure full transparency and reproducibility. 
 
 ### Project Overview
 
@@ -16,21 +14,47 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 - *Bacillus amyloliquefaciens*  
 - *Bacillus subtilis*
 
-### Data Summary
+### Script workflow
 
-- **Inputs:** Cq values from RT-qPCR for PVY detection  
-- **Factors:** Treatment, Days post-inoculation (Dpi), Replication (technical), and Tissue type  
-- **Format:** Three CSV files (one per biological replicate), located in the `Data/` folder  
-- **Preprocessing:** Calculation of viral load using the regression equation from Feng et al. (2006), followed by log10 transformation
+#### **1. Data Import and Preparation**
 
-### Analysis Highlights
+- Three biological replicate datasets (`.csv`) are stored in the `Data/` folder.
+- All data are processed in a single RMarkdown (`.Rmd`) script.
+- Each file contains Cq values from RT-qPCR for PVY quantification, along with metadata (Treatment, Dpi, Replicate).
+- Viral load is calculated from Cq values using the regression equation from [Feng, J.L et al., 2006](https://academic.oup.com/abbs/article/38/10/669/217), then log-transformed for normality.
 
-- All three biological replicates are analyzed within a **single RMarkdown (`.Rmd`) file**  
-- Data is merged and labeled by replicate for downstream statistical modeling  
-- Linear model assess treatment and time interactions  
-- Tukey-adjusted comparisons are performed using `emmeans` and `multcompView`  
-- Visualizations include bar plots for inoculated and systemic leaves with error bars and significance letters  
-- Outputs include combined plots with common legends for effective comparison
+#### **2. Data Grouping and Statistical Analysis**
+
+- Data are grouped by Treatment, Days post-inoculation (Dpi), and Replicate.
+- A linear model is fit to the log-transformed viral load to analyze interaction effects.
+- Estimated marginal means are calculated using `emmeans`, followed by Tukey-adjusted pairwise comparisons.
+- Significance groupings (letters) are extracted for visualization.
+
+#### **3. Visualisation**
+
+- Bar plots are generated for:
+  - **Inoculated leaves** at 1, 4, 7, and 10 Dpi
+  - **Systemic leaves** at 7 and 10 Dpi
+- Visuals include:
+  - Grouped bar charts with error bars (standard error)
+  - Statistical significance labels over bars
+  - Combined plots with shared legends
+- Color-blind friendly palettes are used.
+
+#### **4. Statistical Testing**
+
+- ANOVA and type-II tests (via `car::Anova`) assess Treatment*Dpi interactions.
+- Post hoc multiple comparisons are performed using `emmeans` and `multcompView`.
+- Model fit is evaluated using residuals and diagnostics.
+
+#### **5. Helper Functions (within the RMarkdown)**
+
+- **Viral Load Transformation:** Applies regression formula for converting Cq to copy number.
+- **calculateMeansAndSE:** Aggregates replicate data to compute average and standard error.
+- **addSigLetters:** Merges statistical letters for use in plots.
+- **LeafTypeClassifier:** Categorizes sample type (Inoculated vs. Systemic) based on Dpi.
+- **PlotTemplates:** Modular ggplot2 code to streamline visual consistency across figures.
+- **CombinePlots:** Uses `ggpubr::ggarrange()` to create unified multi-panel figures.
 
 ```
 ├── Nb_PGPR+PVY.html  
