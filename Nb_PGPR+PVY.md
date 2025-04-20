@@ -3,6 +3,14 @@
 \###Libraries used
 
 ``` r
+#install.packages("tidyverse")
+#install.packages("ggplot2")
+#install.packages("agricolae")
+#install.packages("tidyr")
+#install.packages("ggpubr")
+#install.packages("multcomp")
+#install.packages("emmeans")
+#install.packages("multcompView")
 library(tidyverse)
 ```
 
@@ -58,7 +66,7 @@ library(multcompView)
 \###Load and verify data of Rep 1
 
 ``` r
-rep1 <- read.csv("Nb_PGPR+PVY_1st_Reproducibility.csv", header=T)
+rep1 <- read.csv("Data/Nb_PGPR+PVY_1st_Reproducibility.csv", header=T)
 head(rep1)  # View the first few rows
 ```
 
@@ -411,7 +419,7 @@ PVY.1st
 \##Load and verify the data
 
 ``` r
-rep2 <- read.csv("Nb_PGPR+PVY_2nd_Reproducibility.csv", na.strings="na")
+rep2 <- read.csv("Data/Nb_PGPR+PVY_2nd_Reproducibility.csv", na.strings="na")
 str(rep2)   # Check the structure of the data
 ```
 
@@ -748,7 +756,7 @@ PVY.2nd
 
 ``` r
 ## Load data Rep 3
-rep3 <- read.csv("Nb_PGPR+PVY_3rd_Reproducibility.csv", na.strings="na")
+rep3 <- read.csv("Data/Nb_PGPR+PVY_3rd_Reproducibility.csv", na.strings="na")
 ####Verify the data
 head(rep3)  # View the first few rows
 ```

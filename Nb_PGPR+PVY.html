@@ -1489,7 +1489,15 @@ border-radius: 0px;
 <div id="first-trial" class="section level1">
 <h1><strong>First trial</strong></h1>
 <p>###Libraries used</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;ggplot2&quot;)
+#install.packages(&quot;agricolae&quot;)
+#install.packages(&quot;tidyr&quot;)
+#install.packages(&quot;ggpubr&quot;)
+#install.packages(&quot;multcomp&quot;)
+#install.packages(&quot;emmeans&quot;)
+#install.packages(&quot;multcompView&quot;)
+library(tidyverse)</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
@@ -1528,7 +1536,7 @@ library(multcomp)</code></pre>
 ## See &#39;? untidy&#39;</code></pre>
 <pre class="r"><code>library(multcompView)</code></pre>
 <p>###Load and verify data of Rep 1</p>
-<pre class="r"><code>rep1 &lt;- read.csv(&quot;Nb_PGPR+PVY_1st_Reproducibility.csv&quot;, header=T)
+<pre class="r"><code>rep1 &lt;- read.csv(&quot;Data/Nb_PGPR+PVY_1st_Reproducibility.csv&quot;, header=T)
 head(rep1)  # View the first few rows</code></pre>
 <pre><code>##   Treatment  Dpi Replication    Cq
 ## 1   Control IL-1           1 19.72
@@ -1825,7 +1833,7 @@ PVY.1st</code></pre>
 <div id="second-trial" class="section level1">
 <h1><strong>Second trial</strong></h1>
 <p>##Load and verify the data</p>
-<pre class="r"><code>rep2 &lt;- read.csv(&quot;Nb_PGPR+PVY_2nd_Reproducibility.csv&quot;, na.strings=&quot;na&quot;)
+<pre class="r"><code>rep2 &lt;- read.csv(&quot;Data/Nb_PGPR+PVY_2nd_Reproducibility.csv&quot;, na.strings=&quot;na&quot;)
 str(rep2)   # Check the structure of the data</code></pre>
 <pre><code>## &#39;data.frame&#39;:    90 obs. of  4 variables:
 ##  $ Treatment  : chr  &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; &quot;Control&quot; ...
@@ -2112,7 +2120,7 @@ PVY.2nd</code></pre>
 <div id="third-trial" class="section level1">
 <h1><strong>Third trial</strong></h1>
 <pre class="r"><code>## Load data Rep 3
-rep3 &lt;- read.csv(&quot;Nb_PGPR+PVY_3rd_Reproducibility.csv&quot;, na.strings=&quot;na&quot;)
+rep3 &lt;- read.csv(&quot;Data/Nb_PGPR+PVY_3rd_Reproducibility.csv&quot;, na.strings=&quot;na&quot;)
 ####Verify the data
 head(rep3)  # View the first few rows</code></pre>
 <pre><code>##   Treatment  Dpi Replication    Cq
