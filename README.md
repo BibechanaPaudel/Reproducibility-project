@@ -2,6 +2,20 @@
 
 This repository contains the full R-based analytical workflow assessing the effect of PGPR on the accumulation of PVY in *Nicotiana benthamiana* across three independent biological replicates.The complete dataset used in the project is included in the repository with the folder name data to ensure full transparency and reproducibility. 
 
+**Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
+
+### Folder and File Structure
+- Data/: Contains .csv files for each of the three replicates.
+
+- Nb_PGPR+PVY.Rmd: The complete R script with code, output, and narrative.
+
+- Nb_PGPR+PVY.html: Rendered HTML version of the RMarkdown.
+
+- Nb_PGPR+PVY.md: Markdown-exported version for GitHub-friendly viewing.
+
+- Nb_PGPR+PVY_files/figure-gfm: Output plots in high-quality vector format (.png). 
+
+
 ### Project Overview
 
 **Objective:**  
