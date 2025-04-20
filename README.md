@@ -71,23 +71,24 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 - **CombinePlots:** Uses `ggpubr::ggarrange()` to create unified multi-panel figures.
 
 ```
-├── Nb_PGPR+PVY.html  
-├── Nb_PGPR+PVY.md
-├── Nb_PGPR+PVY.Rmd
-├── Nb_PGPR+PVY_1st_Reproducibility.csv  #1st trial data
-├── Nb_PGPR+PVY_2nd_Reproducibility.csv  #2nd trial data
-├── Nb_PGPR+PVY_3rd_Reproducibility.csv  #3rd trial data
+├── Data
+│   ├── Nb_PGPR+PVY_1st_Reproducibility.csv   ## Data from first biological replication
+│   ├── Nb_PGPR+PVY_2nd_Reproducibility.csv   ## Data from second biological replication
+│   └── Nb_PGPR+PVY_3rd_Reproducibility.csv   ## Data from third biological replication
+├── Nb_PGPR+PVY.html   ##script in html format
+├── Nb_PGPR+PVY.md     ##script in github favoured markdowm format
+├── Nb_PGPR+PVY.Rmd    ##script in rmd format
 ├── Nb_PGPR+PVY_files
 │   └── figure-gfm
-│       ├── Combine fig 1st trial-1.png
-│       ├── Combine fig 2nd trial-1.png
-│       ├── Combine fig 3rd trial-1.png
-│       ├── PVY on IL_1st trial_NB-1.png
+│       ├── Combine fig 1st trial-1.png  ## combine fig from 1st biological replication
+│       ├── Combine fig 2nd trial-1.png  ## combine fig from 2nd biological replication
+│       ├── Combine fig 3rd trial-1.png  ## combine fig from 3rd biological replication
+│       ├── PVY on IL_1st trial_NB-1.png 
 │       ├── PVY on IL_2nd trial_NB-1.png
 │       ├── PVY on IL_3rd trial_NB-1.png
 │       ├── PVY on SL_1st trial_NB-1.png
 │       ├── PVY on SL_2ndtrial_NB-1.png
 │       └── PVY on SL_3rdtrial_NB-1.png
-├── README.md
+├── README.md 
 └── Reproducibility-project.Rproj
 ```
