@@ -1,13 +1,12 @@
 ---
 title: "NB_PGPR+PVY"
 author: "Bibechana Paudel"
-date: "2025-04-14"
 output:
+  md_document:
+    variant: gfm
   html_document:
     toc: TRUE
     toc_float: TRUE
-  md_document:
-    variant: gfm
 ---
 
 
@@ -15,7 +14,7 @@ output:
 
 ###Libraries used
 
-```{r, Install, and Load Packages}
+```{r}
 #install.packages("tidyverse")
 #install.packages("ggplot2")
 #install.packages("agricolae")
