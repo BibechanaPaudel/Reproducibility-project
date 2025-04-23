@@ -1,6 +1,6 @@
 # Impact of PGPR on PVY Accumulation in *Nicotiana benthamiana*
 
-This repository contains the full R-based analytical workflow assessing the effect of PGPR on the accumulation of PVY in *Nicotiana benthamiana* across three independent biological replicates.The complete dataset used in the project is included in the repository with the folder name data to ensure full transparency and reproducibility. 
+This repository contains the full R-based analytical workflow assessing the effect of Plant Growth-Promoting Rhizobacteria (PGPR) on the accumulation of Potato Virus Y (PVY) in *Nicotiana benthamiana* across three independent biological replicates.The complete dataset used in the project is included in the repository with the folder name data to ensure full transparency and reproducibility. 
 
 **Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
 
@@ -19,7 +19,7 @@ This repository contains the full R-based analytical workflow assessing the effe
 ### Project Overview
 
 **Objective:**  
-To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-derived Cq values, analyzed over time (Dpi) in both inoculated and systemic leaf tissues.
+To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-derived Cq values, analyzed over time (Dpi) in both inoculated and systemic leaf tissues of *N. benthamiana*.
 
 **Treatments:**
 - Control  
@@ -34,15 +34,15 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 
 - Three biological replicate datasets (`.csv`) are stored in the `Data/` folder.
 - All data are processed in a single RMarkdown (`.Rmd`) script.
-- Each file contains Cq values from RT-qPCR for PVY quantification, along with metadata (Treatment, Dpi, Replicate).
-- Viral load is calculated from Cq values using the regression equation from [Feng, J.L et al., 2006](https://academic.oup.com/abbs/article/38/10/669/217), then log-transformed for normality.
+- Each file contains Cq values from RT-qPCR for PVY quantification, along with metadata (Treatment, Dpi, Technical Replicate).
+- Viral load is calculated from Cq values using the regression equation **Y= −3.93X+49.153** from [Feng, J.L et al., 2006](https://academic.oup.com/abbs/article/38/10/669/217), then log-transformed for normality.
 
 #### **2. Data Grouping and Statistical Analysis**
 
 - Data are grouped by Treatment, Days post-inoculation (Dpi), and Replicate.
 - A linear model is fit to the log-transformed viral load to analyze interaction effects.
 - Estimated marginal means are calculated using `emmeans`, followed by Tukey-adjusted pairwise comparisons.
-- Significance groupings (letters) are extracted for visualization.
+- Significance groupings (letters) are extracted for visualisation.
 
 #### **3. Visualisation**
 
