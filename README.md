@@ -35,7 +35,7 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 - Three biological replicate datasets (`.csv`) are stored in the `Data/` folder.
 - All data are processed in a single RMarkdown (`.Rmd`) script.
 - Each file contains Cq values from RT-qPCR for PVY quantification, along with metadata (Treatment, Dpi, Technical Replicate).
-- Viral load is calculated from Cq values using the regression equation **Y= −3.93X+49.153** from [Feng, J.L et al., 2006](https://academic.oup.com/abbs/article/38/10/669/217), then log-transformed for normality.
+- Viral load is calculated from Cq values using the regression equation **Y= −3.93X+49.153**, where Y= Cq value and X= copy number of virus from [Feng, J.L et al., 2006](https://academic.oup.com/abbs/article/38/10/669/217), then log-transformed for normality.
 
 #### **2. Data Grouping and Statistical Analysis**
 
