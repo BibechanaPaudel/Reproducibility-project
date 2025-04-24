@@ -2,7 +2,7 @@
 
 This repository contains the complete R-based analytical workflow for processing and visualizing RT-qPCR data evaluating the impact of Plant Growth-Promoting Rhizobacteria (PGPR) on the accumulation of Potato Virus Y (PVY) in *Nicotiana benthamiana*. The study was conducted across three independent biological replicates, ensuring statistical robustness and reproducibility.
 
-All scripts, visualizations, and statistical analyses are provided to support transparency and facilitate reproducibility. The full dataset used in this project is included in the repository under the folder named Data/.
+All scripts, visualizations, and statistical analyses are provided to support transparency and facilitate reproducibility. The full dataset used in this project is included in the repository under the folder named `Data/`.
 
 **Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
 
