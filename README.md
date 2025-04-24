@@ -41,10 +41,12 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 
 #### **2. Data Grouping and Statistical Analysis**
 
-- Data are grouped by Treatment, Days post-inoculation (Dpi), and Replicate.
+- Data are grouped by Treatment, Days post-inoculation (Dpi), and Technical Replicates.
 - A linear model is fit to the log-transformed viral load to analyze interaction effects.
+- ANOVA (type-II via car::Anova) is used to test for significant Treatment × Dpi interactions.
 - Estimated marginal means are calculated using `emmeans`, followed by Tukey-adjusted pairwise comparisons.
-- Significance groupings (letters) are extracted for visualisation.
+-Significance letters (e.g., a, b, c) are generated using multcompView
+-Significance groupings (letters) are extracted for visualisation.
 
 #### **3. Visualisation**
 
@@ -56,11 +58,6 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
   - Statistical significance labels over bars
   - Combined plots with shared legends
 - Color-blind friendly palettes are used.
-
-#### **4. Statistical Testing**
-
-- ANOVA and type-II tests (via `car::Anova`) assess Treatment*Dpi interactions.
-- Post hoc multiple comparisons are performed using `emmeans` and `multcompView`.
 
 ### Citation
 If you use this code for your research, please cite it using the Zenodo DOI provided here:
