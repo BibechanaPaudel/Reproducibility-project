@@ -45,8 +45,8 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 - A linear model is fit to the log-transformed viral load to analyze interaction effects.
 - ANOVA (type-II via car::Anova) is used to test for significant Treatment × Dpi interactions.
 - Estimated marginal means are calculated using `emmeans`, followed by Tukey-adjusted pairwise comparisons.
--Significance letters (e.g., a, b, c) are generated using multcompView
--Significance groupings (letters) are extracted for visualisation.
+- Significance letters (e.g., a, b, c) are generated using `multcompView`.
+- Significance groupings (letters) are extracted for visualisation.
 
 #### **3. Visualisation**
 
