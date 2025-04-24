@@ -1729,8 +1729,8 @@ colnames(sig.diff.letters) &lt;- c(&quot;Treatment&quot;,
                                 &quot;Dpi&quot;,
                                 &quot;Letters&quot;)</code></pre>
 <p>##Data summarization</p>
-<pre class="r"><code>PVY1 &lt;- rep1 %&gt;%
-  group_by(Treatment, Dpi) %&gt;%   
+<pre class="r"><code>PVY1 &lt;- rep1 %&gt;%  # Start with the dataset `rep1` and pipe (%&gt;%) it into the next operations
+  group_by(Treatment, Dpi) %&gt;%   # Group the data by treatment type and days post-inoculation (Dpi)
   dplyr::summarize(
     avg.virus= mean(logViralLoad, na.rm=TRUE),
     n=n(),
@@ -1747,7 +1747,7 @@ colnames(sig.diff.letters) &lt;- c(&quot;Treatment&quot;,
 </div>
 <div id="visualization-inoculated-sample" class="section level2">
 <h2>Visualization: Inoculated sample</h2>
-<pre class="r"><code>inoculated&lt;-filter(PVY1, Dpi==&quot;IL-1&quot; | Dpi==&quot;IL-4&quot; | Dpi==&quot;IL-7&quot; | Dpi==&quot;IL-10&quot;)
+<pre class="r"><code>inoculated&lt;-filter(PVY1, Dpi==&quot;IL-1&quot; | Dpi==&quot;IL-4&quot; | Dpi==&quot;IL-7&quot; | Dpi==&quot;IL-10&quot;) #Subset the PVY1 data to include only specific timepoints labeled &quot;IL-1&quot;, &quot;IL-4&quot;, &quot;IL-7&quot;, and &quot;IL-10&quot;.
 inoculated$Treatment&lt;-factor(inoculated$Treatment, levels=c(&quot;Control&quot;,&quot;P. fluorescens&quot;, &quot;S. marcescens&quot;, &quot;B. amyloliquifaciens&quot;, &quot;B. subtilis&quot;))</code></pre>
 <pre class="r"><code>cbbPalette &lt;- c( &quot;#56B4E9&quot;,&quot;#F0E442&quot;,&quot;#CC79A7&quot;, &quot;#E69F00&quot;, &quot;#009E73&quot;)  ##Load colour blind friendly cbbPalette
 PVY_IL_1&lt;-ggplot(inoculated, aes(x =factor(Dpi,levels=c(&quot;IL-1&quot;, &quot;IL-4&quot;, &quot;IL-7&quot;, &quot;IL-10&quot;)), y =avg.virus , fill = Treatment)) +
@@ -1792,7 +1792,7 @@ PVY_SL_1&lt;-ggplot(systemic, aes(x =factor(Dpi,levels=c(&quot;SL-7&quot;,&quot;
                     ymax = avg.virus + se),
                 width = 0.4,
                 position = position_dodge(width = 0.7)) +
-  geom_text(data = systemic, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+
+  geom_text(data = systemic, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+   ## Add group comparison letters
   theme_classic() +
   labs(title= &quot;&quot; ,
        x = &quot;&quot;,
