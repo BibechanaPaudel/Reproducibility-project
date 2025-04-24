@@ -5,7 +5,7 @@ This repository contains the full R-based analytical workflow for the RT-qPCR da
 **Note:** PGPR treatments were applied one week prior to PVY inoculation, allowing time for induced resistance responses to develop.
 
 ### Folder and File Structure
-- [Data](https://github.com/BibechanaPaudel/Reproducibility-project/tree/main/Nb_PGPR%2BPVY_files/figure-gfm): Contains .csv files for each of the three biological replicates.
+- [Data](https://github.com/BibechanaPaudel/Reproducibility-project/tree/main/Data): Contains .csv files for each of the three biological replicates.
 
 - [Nb_PGPR+PVY.Rmd](https://github.com/BibechanaPaudel/Reproducibility-project/blob/main/Nb_PGPR%2BPVY.Rmd): The complete R script with code, output, and narrative.
 
