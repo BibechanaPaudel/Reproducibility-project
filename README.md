@@ -1,4 +1,4 @@
-# *RT-qPCR Data Analysis*
+# **RT-qPCR Data Analysis**
 
 This repository contains the complete R-based analytical workflow for processing and visualizing RT-qPCR data evaluating the impact of Plant Growth-Promoting Rhizobacteria (PGPR) on the accumulation of Potato Virus Y (PVY) in *Nicotiana benthamiana*. The study was conducted across three independent biological replicates, ensuring statistical robustness and reproducibility.
 
@@ -61,15 +61,6 @@ To evaluate whether PGPR treatments mitigate PVY accumulation, based on qPCR-der
 
 - ANOVA and type-II tests (via `car::Anova`) assess Treatment*Dpi interactions.
 - Post hoc multiple comparisons are performed using `emmeans` and `multcompView`.
-
-#### **5. Helper Functions (within the RMarkdown)**
-
-- **Viral Load Transformation:** Applies regression formula for converting Cq to copy number.
-- **calculateMeansAndSE:** Aggregates replicate data to compute average and standard error.
-- **addSigLetters:** Merges statistical letters for use in plots.
-- **LeafTypeClassifier:** Categorizes sample type (Inoculated vs. Systemic) based on Dpi.
-- **PlotTemplates:** Modular ggplot2 code to streamline visual consistency across figures.
-- **CombinePlots:** Uses `ggpubr::ggarrange()` to create unified multi-panel figures.
 
 ### Citation
 If you use this code for your research, please cite it using the Zenodo DOI provided here:
