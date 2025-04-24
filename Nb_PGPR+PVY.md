@@ -295,8 +295,8 @@ colnames(sig.diff.letters) <- c("Treatment",
 \##Data summarization
 
 ``` r
-PVY1 <- rep1 %>%
-  group_by(Treatment, Dpi) %>%   
+PVY1 <- rep1 %>%  # Start with the dataset `rep1` and pipe (%>%) it into the next operations
+  group_by(Treatment, Dpi) %>%   # Group the data by treatment type and days post-inoculation (Dpi)
   dplyr::summarize(
     avg.virus= mean(logViralLoad, na.rm=TRUE),
     n=n(),
@@ -320,7 +320,7 @@ PVY1$Leaf_sample <- ifelse(
 ## Visualization: Inoculated sample
 
 ``` r
-inoculated<-filter(PVY1, Dpi=="IL-1" | Dpi=="IL-4" | Dpi=="IL-7" | Dpi=="IL-10")
+inoculated<-filter(PVY1, Dpi=="IL-1" | Dpi=="IL-4" | Dpi=="IL-7" | Dpi=="IL-10") #Subset the PVY1 data to include only specific timepoints labeled "IL-1", "IL-4", "IL-7", and "IL-10".
 inoculated$Treatment<-factor(inoculated$Treatment, levels=c("Control","P. fluorescens", "S. marcescens", "B. amyloliquifaciens", "B. subtilis"))
 ```
 
@@ -374,7 +374,7 @@ PVY_SL_1<-ggplot(systemic, aes(x =factor(Dpi,levels=c("SL-7","SL-10")), y =avg.v
                     ymax = avg.virus + se),
                 width = 0.4,
                 position = position_dodge(width = 0.7)) +
-  geom_text(data = systemic, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+
+  geom_text(data = systemic, aes(label = Letters, y = avg.virus),position = position_dodge(width = 0.7), vjust = -0.5)+   ## Add group comparison letters
   theme_classic() +
   labs(title= "" ,
        x = "",
